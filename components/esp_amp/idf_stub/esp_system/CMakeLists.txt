@@ -1,0 +1,28 @@
+set(srcs
+    "syscalls.c"
+)
+
+if(CONFIG_IDF_TARGET_ARCH_RISCV)
+    list(APPEND srcs "port/arch/riscv/panic_handler.c")
+endif()
+
+if(IDF_TARGET STREQUAL "esp32p4")
+    list(APPEND srcs
+        "port/soc/esp32p4/portasm.S"
+        "port/soc/esp32p4/start.S"
+        "port/soc/esp32p4/startup.c"
+
+        "${IDF_PATH}/components/riscv/interrupt_clic.c"
+        "${IDF_PATH}/components/riscv/interrupt.c"
+        "${IDF_PATH}/components/riscv/vectors_clic.S"
+        "${IDF_PATH}/components/riscv/vectors.S"
+        "${IDF_PATH}/components/esp_system/port/arch/riscv/esp_ipc_isr_handler.S"
+    )
+endif()
+
+idf_component_register(
+    SRCS ${srcs}
+    REQUIRES hal riscv esp_rom)
+
+target_link_libraries(${COMPONENT_LIB} INTERFACE m)
+target_link_libraries(${COMPONENT_LIB} INTERFACE "-u subcore_panic_dump")
