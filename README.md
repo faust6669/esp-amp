@@ -42,7 +42,7 @@ Please check [Build System Doc](./docs/build_system.md) for more details.
 System component contains APIs for maincore to manage life cycle of subcore and process system events from subcore. Supported features at present include:
 
 * Start subcore and stop subcore.
-* Load subcore firmware to DRAM or RTC RAM.
+* Load subcore firmware to HP RAM or RTC RAM.
 * Notify maincore about subcore panic event and invoke customizable panic handler.
 * Route subcore printf messages to maincore console.
 
@@ -50,12 +50,13 @@ Please check [System Doc](./docs/system.md) for more details.
 
 ## Supported ESP-IDF Version and SoCs
 
-IDF v5.3.1 or later is required. At present the following maincore-subcore configurations are supported:
+At present the following maincore-subcore configurations are supported by ESP-AMP:
 
-| SoC | Maincore | Subcore |
-| :--- | :--- | :--- |
-| ESP32-C6 | HP core | LP core |
-| ESP32-P4 | HP core | HP core |
+| SoC | IDF Version | Maincore | Subcore |
+| :---: | :---: | :---: | :---: |
+| ESP32-C5 | v5.5 and later | HP core | LP core |
+| ESP32-C6 | v5.3.1 and later | HP core | LP core |
+| ESP32-P4 | v5.3.1 and later | HP core | HP core |
 
 Please note that we are working to support more SoCs with additional maincore-subcore configurations.
 
@@ -68,7 +69,7 @@ First, setup the IDF environment.
 ``` shell
 git clone --recursive https://github.com/espressif/esp-idf.git
 cd esp-idf
-git checkout v5.3.1
+git checkout v5.3.1 # for ESP32-C6/ESP32-P4 or v5.5 for ESP32-C5
 ./install.sh
 . export.sh
 ```
@@ -91,14 +92,14 @@ idf.py flash monitor
 
 ## Tips for developing subcore firmware
 
-The following tips work for both ESP32-P4 and ESP32-C6:
+The following tips work for all targets:
 
 * Dynamic memory allocation is supported but not enabled by default. To enable it, set `CONFIG_ESP_AMP_SUBCORE_ENABLE_HEAP=y`. Heap size can be configured via `CONFIG_ESP_AMP_SUBCORE_HEAP_SIZE`.
-* Reserve enough stack space. Stack is allocated from LP RAM on ESP32-C6 and HP RAM on ESP32-P4. Stack smashing protection mechanism is not supported on subcore. As stack grows, it may overwrite heap or `.bss` section without any warning and cause unpredictable results. Therefore, it is recommended to reserve enough stack space for subcore application. Sdkconfig option `ESP_AMP_SUBCORE_STACK_SIZE_MIN` can be used to specify the minimum stack size. If the remaining memory space is insufficient to allocate the stack, the build will fail.
+* Reserve enough stack space. Stack is allocated from RTC RAM on ESP32-C5 and ESP32-C6 and from HP RAM on ESP32-P4. Stack smashing protection mechanism is not supported on subcore. As stack grows, it may overwrite heap or `.bss` section without any warning and cause unpredictable results. Therefore, it is recommended to reserve enough stack space for subcore application. Sdkconfig option `ESP_AMP_SUBCORE_STACK_SIZE_MIN` can be used to specify the minimum stack size. If the remaining memory space is insufficient to allocate the stack, the build will fail.
 
-If you are developing subcore firmware on ESP32-C6, please refer to the following tips:
+If you are developing subcore firmware on ESP32-C5 and ESP32-C6, please refer to the following tips:
 
-* Go beyond the limited RTC Memory: By default, subcore firmware is loaded into RTC memory if subcore type is LP core. However, the limited size of RTC RAM (16KB on ESP32-C6) can quickly go short as LP core firmware grows. ESP-AMP allows you to load subcore firmware into HP RAM by setting Kconfig option `CONFIG_ESP_AMP_SUBCORE_USE_HP_MEM=y`. Please refer to [Memory Layout Doc](./docs/memory_layout.md) for more details.
+* Go beyond the limited RTC RAM: By default, subcore firmware is loaded into RTC RAM if subcore type is LP core. However, the limited size of RTC RAM (16KB on ESP32-C5 and ESP32-C6) can go short soon as LP core firmware grows. ESP-AMP allows you to load subcore firmware into HP RAM by setting Kconfig option `CONFIG_ESP_AMP_SUBCORE_USE_HP_MEM=y`. Please refer to [Memory Layout Doc](./docs/memory_layout.md) for more details.
 * Keep away from HP ROM APIs: LP core has no access to HP ROM. Therefore, ROM apis such as `esp_rom_printf`, `esp_rom_delay_us` are not supported on LP core.
 
 ## Known Limitations
@@ -115,7 +116,7 @@ ESP-AMP is still under active development. The following limitations exist at pr
 
 ### Why not use OpenAMP?
 
-[OpenAMP](https://github.com/OpenAMP/open-amp) is a popular open source framework for building AMP applications on SoCs with multiple processing cores. In fact, ESP-AMP is inspired by OpenAMP. The main reason that we create ESP-AMP instead of reusing OpenAMP is the demand of an AMP framework with small footprint. Abundant features in OpenAMP not only increase the complexity for use, but also lead to bloating code size. This makes OpenAMP difficult to port to systems with limited resources, especially LP core on ESP32-C6 with only 16KB RTC RAM as default internal RAM. ESP-AMP is designed to be lightweight with enough features to build AMP applications.
+[OpenAMP](https://github.com/OpenAMP/open-amp) is a popular open source framework for building AMP applications on SoCs with multiple processing cores. In fact, ESP-AMP is inspired by OpenAMP. The main reason that we create ESP-AMP instead of reusing OpenAMP is the demand of an AMP framework with small footprint. Abundant features in OpenAMP not only increase the complexity for use, but also lead to bloating code size. This makes OpenAMP difficult to port to systems with limited resources, especially LP core on ESP32-C5 and ESP32-C6 with only 16KB RTC RAM as default internal RAM. ESP-AMP is designed to be lightweight with enough features to build AMP applications.
 
 ### Can RTCRAM be used as shared memory?
 
