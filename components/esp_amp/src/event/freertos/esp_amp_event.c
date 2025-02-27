@@ -187,13 +187,14 @@ void esp_amp_event_unbind_handle(uint16_t sysinfo_id)
 
 void esp_amp_event_table_dump(void)
 {
-    portENTER_CRITICAL(&event_lock);
-    ESP_AMP_DRAM_LOGI(DRAM_STR("event"), "sysinfo_id\tevent_handle\tevent_bits");
+    ESP_AMP_LOGI("", "==== EVENT TABLE[%d] ====", ESP_AMP_EVENT_TABLE_LEN);
+    ESP_AMP_LOGI("", "ID\t\tHANDLE");
     for (int i = 0; i < ESP_AMP_EVENT_TABLE_LEN; i++) {
-        ESP_AMP_DRAM_LOGI(DRAM_STR("event"), "%04x\t\t%p\t%p", event_table[i].sysinfo_id, event_table[i].event_handle, (void *)event_table[i].event_bits);
+        if (event_table[i].event_handle) {
+            ESP_AMP_LOGI("", "0x%08x\t%p", event_table[i].sysinfo_id, event_table[i].event_handle);
+        }
     }
-    ESP_AMP_DRAM_LOGI(DRAM_STR("event"), "====\t\tEND\t\t====");
-    portEXIT_CRITICAL(&event_lock);
+    ESP_AMP_LOGI("", "END\n");
 }
 
 #if IS_MAIN_CORE

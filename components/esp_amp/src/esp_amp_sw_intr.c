@@ -80,14 +80,14 @@ void esp_amp_sw_intr_trigger(esp_amp_sw_intr_id_t intr_id)
 
 void esp_amp_sw_intr_handler_dump(void)
 {
-    ESP_AMP_LOGD(TAG, "== sw handlers ==");
-    ESP_AMP_LOGD(TAG, "intr_id\thandler");
+    ESP_AMP_LOGI("", "=== SW INTR TABLE[%d] ===", ESP_AMP_SW_INTR_HANDLER_TABLE_LEN);
+    ESP_AMP_LOGI("", "ID\t\tHANDLER");
     for (int i = 0; i < ESP_AMP_SW_INTR_HANDLER_TABLE_LEN; i++) {
         if (sw_intr_handlers[i].handler) {
-            ESP_AMP_LOGD(TAG, "%d\t%p", sw_intr_handlers[i].intr_id, sw_intr_handlers[i].handler);
+            ESP_AMP_LOGI("", "%d\t\t%p", sw_intr_handlers[i].intr_id, sw_intr_handlers[i].handler);
         }
     }
-    ESP_AMP_LOGD(TAG, "=================");
+    ESP_AMP_LOGI("", "END\n");
 }
 
 int esp_amp_sw_intr_init(void)
