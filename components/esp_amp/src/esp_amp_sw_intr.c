@@ -65,17 +65,14 @@ void esp_amp_sw_intr_delete_handler(esp_amp_sw_intr_id_t intr_id, esp_amp_sw_int
 
 void esp_amp_sw_intr_trigger(esp_amp_sw_intr_id_t intr_id)
 {
-    ESP_AMP_LOGD(TAG, "intr_id:%d, SW_INTR_ID_MAX:%d", intr_id, SW_INTR_ID_MAX);
     assert((int)intr_id <= (int)SW_INTR_ID_MAX);
 
     /* must be initialized */
     assert(s_sw_intr_st != NULL);
 
 #if IS_MAIN_CORE
-    ESP_AMP_LOGD(TAG, "maincore trigger sw intr");
     atomic_fetch_or(&(s_sw_intr_st->sub_core_sw_intr_st), BIT(intr_id));
 #else
-    ESP_AMP_LOGD(TAG, "subcore trigger sw intr");
     atomic_fetch_or(&(s_sw_intr_st->main_core_sw_intr_st), BIT(intr_id));
 #endif
     esp_amp_platform_sw_intr_trigger();
