@@ -55,19 +55,9 @@ void esp_amp_stop_subcore(void)
 #if CONFIG_ESP_AMP_SUBCORE_TYPE_LP_CORE
 
 #include "ulp_lp_core.h"
-#include "lp_core_uart.h"
-
-static void lp_uart_init(void)
-{
-    lp_core_uart_cfg_t cfg = LP_CORE_UART_DEFAULT_CONFIG();
-    ESP_ERROR_CHECK(lp_core_uart_init(&cfg));
-    printf("LP UART initialized successfully\n");
-}
 
 int esp_amp_start_subcore(void)
 {
-    lp_uart_init();
-
     ulp_lp_core_cfg_t cfg = {
         .wakeup_source = ULP_LP_CORE_WAKEUP_SOURCE_HP_CPU,
     };
