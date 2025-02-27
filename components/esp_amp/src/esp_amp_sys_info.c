@@ -112,13 +112,12 @@ int esp_amp_sys_info_init(void)
 
 void esp_amp_sys_info_dump(void)
 {
-    ESP_AMP_LOGI(TAG, "sys_info: %p", s_esp_amp_sys_info);
-    ESP_AMP_LOGI(TAG, "==================================");
-    ESP_AMP_LOGI(TAG, "INFO_ID\tSIZE\tADDRESS");
+    ESP_AMP_LOGI("", "====== SYS INFO(%p) ======", s_esp_amp_sys_info);
+    ESP_AMP_LOGI("", "ID\t\tSIZE\tADDR");
     sys_info_header_t *sys_info_entry = s_esp_amp_sys_info->next;
     while (sys_info_entry != NULL) {
-        ESP_AMP_LOGI(TAG, "0x%04x\t0x%04x\t%p", sys_info_entry->info_id, sys_info_entry->size, (void*)((uint8_t*)(s_esp_amp_sys_info) + sizeof(sys_info_header_t)));
+        ESP_AMP_LOGI("", "0x%08x\t0x%u\t%p", sys_info_entry->info_id, sys_info_entry->size, (void*)((uint8_t*)(s_esp_amp_sys_info) + sizeof(sys_info_header_t)));
         sys_info_entry = sys_info_entry->next;
     }
-    ESP_AMP_LOGI(TAG, "==================================");
+    ESP_AMP_LOGI("", "END\n");
 }
