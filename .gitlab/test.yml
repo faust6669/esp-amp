@@ -1,0 +1,46 @@
+basic_test:
+  extends: .template
+  stage: test
+  needs:
+    - job: "basic_build"
+      artifacts: true
+  tags:
+    - tester
+  image: ghcr.io/astral-sh/uv:${UV_VERSION}-python${PYTHON_VERSION}-${BASE_LAYER}
+
+  resource_group: ${TARGET}
+  variables:
+    UV_CACHE_DIR: $CI_PROJECT_DIR/uv-cache
+  cache:
+    - key:
+        files:
+          - ${BASIC_TEST_PATH}/uv.lock
+      paths:
+        - ${UV_CACHE_DIR}
+      policy: pull-push
+
+  before_script:
+    - echo "Verifying artifacts are present in ${BASIC_TEST_PATH}/build_idf-${IDF_VER}_${TARGET}/:"
+    - ls -lha "${BASIC_TEST_PATH}/build_idf-${IDF_VER}_${TARGET}/"
+  script:
+    - echo "Testing application for target ${TARGET} in ${BASIC_TEST_PATH} with IDF ${IDF_VER}"
+    - echo "Changing directory to ${BASIC_TEST_PATH}"
+
+    - cd "${BASIC_TEST_PATH}"
+    - echo "Installing test dependencies"
+    - uv sync
+
+    - echo "Running pytest for ${TARGET}"
+    - uv run pytest --target ${TARGET} --junit-xml=result_${TARGET}_${IDF_VER}.xml --build-dir=build_idf-${IDF_VER}_${TARGET}
+  after_script:
+    - echo "Prune CI cache"
+    - uv cache prune --ci
+
+  artifacts:
+    name: "basic_tests_results_${TARGET}_${IDF_VER}_${CI_COMMIT_REF_SLUG}"
+    when: always
+    paths:
+      - "${BASIC_TEST_PATH}/result_${TARGET}_${IDF_VER}.xml"
+    reports:
+      junit: "${BASIC_TEST_PATH}/result_${TARGET}_${IDF_VER}.xml"
+    expire_in: 1 week

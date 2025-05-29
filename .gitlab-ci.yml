@@ -1,0 +1,48 @@
+.amp_ci_matrix: &amp_ci_matrix
+  matrix:
+    - IDF_VER: "release-v5.3"
+      TARGET: ["esp32c6", "esp32p4"]
+    - IDF_VER: "release-v5.4"
+      TARGET: ["esp32c6", "esp32p4"]
+    - IDF_VER: "release-v5.5"
+      TARGET: ["esp32c6", "esp32p4"]
+
+stages:
+  - build
+  - test
+
+variables:
+  BASIC_TEST_PATH: "test_apps/esp_amp_basic_tests"
+  UV_VERSION: "0.7.8"
+  PYTHON_VERSION: "3.12"
+  BASE_LAYER: "bookworm-slim"
+  UV_LINK_MODE: "copy"
+
+workflow:
+  rules:
+    # Rule 1: Allow manual trigger (from GitLab UI -> CI/CD -> Pipelines -> Run pipeline)
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: always
+    # Rule 2: Run on push to the default branch (e.g., 'main' or 'master')
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    # Rule 3: Run on push to a merge request (i.e., commits to the source branch of an MR)
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    # Rule 4: Prevent duplicate pipelines for MRs if you have branch pipelines AND MR pipelines.
+    # This rule says: if it's a push event AND there's an open merge request for this commit's branch,
+    # don't run a branch pipeline (as an MR pipeline will run instead from rule 3).
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # Rule 5: Default to not running for other push events to branches (unless explicitly covered above)
+    # This avoids running for every feature branch push unless it's part of an MR or the default branch.
+    # If you want all branch pushes to trigger, remove this or change to 'when: always'
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: never
+
+.template:
+  parallel: *amp_ci_matrix
+
+include:
+  - local: ".gitlab/build.yml"
+  - local: ".gitlab/test.yml"
