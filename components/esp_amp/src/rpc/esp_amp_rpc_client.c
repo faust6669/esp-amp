@@ -73,7 +73,7 @@ void esp_amp_rpc_client_deinit(esp_amp_rpc_client_t client)
 
     esp_amp_env_enter_critical();
     esp_amp_rpmsg_delete_endpoint(client_inst->rpmsg_dev, client_inst->client_id);
-    memset(client_inst, 0, sizeof(esp_amp_rpc_server_inst_t));
+    memset(client_inst, 0, sizeof(esp_amp_rpc_client_inst_t));
     esp_amp_env_exit_critical();
 }
 
