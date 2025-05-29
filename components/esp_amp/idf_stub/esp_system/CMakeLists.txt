@@ -11,6 +11,7 @@ if(IDF_TARGET STREQUAL "esp32p4")
         "port/soc/esp32p4/portasm.S"
         "port/soc/esp32p4/start.S"
         "port/soc/esp32p4/startup.c"
+        "port/soc/esp32p4/port.c"
 
         "${IDF_PATH}/components/riscv/interrupt_clic.c"
         "${IDF_PATH}/components/riscv/interrupt.c"
