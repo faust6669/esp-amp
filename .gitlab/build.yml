@@ -1,7 +1,15 @@
-basic_build:
+include: .gitlab/template.yml
+
+build (basic):
+  stage: core
   extends: .template
-  stage: build
-  allow_failure: true
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .gitlab/**/*.yml
+        - .gitlab-ci.yml
+        - components/esp_amp/**/*
+        - test_apps/esp_amp_basic_tests/**/*
   tags:
     - builder
   image: espressif/idf:${IDF_VER}

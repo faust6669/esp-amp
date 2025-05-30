@@ -1,0 +1,4 @@
+include: .gitlab/test_template.yml
+
+test (basic):
+  extends: .test template (basic)

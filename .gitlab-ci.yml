@@ -1,15 +1,5 @@
-.amp_ci_matrix: &amp_ci_matrix
-  matrix:
-    - IDF_VER: "release-v5.3"
-      TARGET: ["esp32c6", "esp32p4"]
-    - IDF_VER: "release-v5.4"
-      TARGET: ["esp32c6", "esp32p4"]
-    - IDF_VER: "release-v5.5"
-      TARGET: ["esp32c6", "esp32p4"]
-
 stages:
-  - build
-  - test
+  - core
 
 variables:
   BASIC_TEST_PATH: "test_apps/esp_amp_basic_tests"
@@ -40,9 +30,6 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "push"
       when: never
 
-.template:
-  parallel: *amp_ci_matrix
-
 include:
   - local: ".gitlab/build.yml"
-  - local: ".gitlab/test.yml"
+  - local: ".gitlab/test_trigger.yml"

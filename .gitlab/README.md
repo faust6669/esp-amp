@@ -2,6 +2,26 @@
 
 Our CI is running on a Orange Pi 5 Plus (4GB version), below is a memo for the setup.
 
+## Workflow
+
+```mermaid
+graph LR
+    template[template]
+    build[build]
+    test_trigger[test_trigger]
+    test_auto[test_auto]
+    test_manual[test_manual]
+    test_template[test_template]
+
+    build -- "based on" --> template
+    test_trigger -- "need" --> build
+    test_trigger -- "if build success" --> test_auto
+    test_trigger -- "if build fail" --> test_manual
+    test_auto -- "based on" --> test_template
+    test_manual -- "based on" --> test_template
+    test_template -- "based on" --> template
+```
+
 ## `/etc/gitlab-runner/config.toml`
 
 ```toml
@@ -28,7 +48,7 @@ shutdown_timeout = 0
     [runners.cache.azure]
   [runners.docker]
     tls_verify = false
-    image = "ubuntu:latest"
+    image = "debian:bookworm-slim"
     pull_policy = ["always", "if-not-present"]
     disable_entrypoint_overwrite = false
     oom_kill_disable = false

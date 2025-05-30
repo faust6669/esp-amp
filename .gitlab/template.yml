@@ -1,0 +1,11 @@
+.amp_ci_matrix: &amp_ci_matrix
+  matrix:
+    - IDF_VER: "release-v5.3"
+      TARGET: ["esp32c6", "esp32p4"]
+    - IDF_VER: "release-v5.4"
+      TARGET: ["esp32c6", "esp32p4"]
+    - IDF_VER: "release-v5.5"
+      TARGET: ["esp32c6", "esp32p4"]
+
+.template:
+  parallel: *amp_ci_matrix
