@@ -39,6 +39,8 @@ stages:
     - uv sync
 
     - echo "Running pytest for ${TARGET}"
+    - export ESPBAUD=115200
+    - sleep $((random % 15))
     - uv run pytest --target ${TARGET} --junit-xml=result_${TARGET}_${IDF_VER}.xml --build-dir=build_idf-${IDF_VER}_${TARGET}
 
   artifacts:
