@@ -40,3 +40,4 @@ sdkconfig.old
 
 # pytest
 *.pyc
+__pycache__

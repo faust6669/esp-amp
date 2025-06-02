@@ -1,14 +1,10 @@
 stages:
-  - core
-
-variables:
-  BASIC_TEST_PATH: "test_apps/esp_amp_basic_tests"
-  UV_VERSION: "0.7.8"
-  PYTHON_VERSION: "3.12"
-  BASE_LAYER: "bookworm-slim"
-  UV_LINK_MODE: "copy"
+  - build
+  - test
 
 workflow:
+  auto_cancel:
+    on_new_commit: interruptible
   rules:
     # Rule 1: Allow manual trigger (from GitLab UI -> CI/CD -> Pipelines -> Run pipeline)
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -30,6 +26,9 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "push"
       when: never
 
+variables:
+  BASIC_TEST_PATH: "test_apps/esp_amp_basic_tests"
+
 include:
-  - local: ".gitlab/build.yml"
-  - local: ".gitlab/test_trigger.yml"
+  - local: "/.gitlab/build.yml"
+  - local: "/.gitlab/test.yml"
