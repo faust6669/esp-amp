@@ -1,0 +1,53 @@
+include: .gitlab/template.yml
+
+stages:
+  - core
+
+# https://stackoverflow.com/questions/72725525/how-to-set-a-job-to-manual-based-on-previous-stage-failure
+.test template (basic):
+  stage: core
+  extends: .template
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: "build (basic): [$IDF_VER, $TARGET]"
+  rules:
+    - if: $CI_MERGE_REQUEST_ID # escape hatch: https://stackoverflow.com/questions/79076364/dynamic-child-pipeline-not-created-and-reports-error-resulting-pipeline-would-ha
+  tags:
+    - tester
+  image: ghcr.io/astral-sh/uv:${UV_VERSION}-python${PYTHON_VERSION}-${BASE_LAYER}
+
+  resource_group: ${TARGET}
+  variables:
+    UV_CACHE_DIR: $CI_PROJECT_DIR/uv-cache
+  cache:
+    - key:
+        files:
+          - ${BASIC_TEST_PATH}/uv.lock
+      paths:
+        - ${UV_CACHE_DIR}
+      policy: pull-push
+
+  before_script:
+    - echo "Verifying artifacts are present in ${BASIC_TEST_PATH}/build_idf-${IDF_VER}_${TARGET}/:"
+    - ls -lha "${BASIC_TEST_PATH}/build_idf-${IDF_VER}_${TARGET}/"
+  script:
+    - echo "Testing application for target ${TARGET} in ${BASIC_TEST_PATH} with IDF ${IDF_VER}"
+    - echo "Changing directory to ${BASIC_TEST_PATH}"
+
+    - cd "${BASIC_TEST_PATH}"
+    - echo "Installing test dependencies"
+    - uv sync
+
+    - echo "Running pytest for ${TARGET}"
+    - export ESPBAUD=115200
+    - sleep $((random % 15))
+    - uv run pytest --target ${TARGET} --junit-xml=result_${TARGET}_${IDF_VER}.xml --build-dir=build_idf-${IDF_VER}_${TARGET}
+
+  artifacts:
+    name: "basic_tests_results_${TARGET}_${IDF_VER}_${CI_COMMIT_REF_SLUG}"
+    when: always
+    paths:
+      - "${BASIC_TEST_PATH}/result_${TARGET}_${IDF_VER}.xml"
+    reports:
+      junit: "${BASIC_TEST_PATH}/result_${TARGET}_${IDF_VER}.xml"
+    expire_in: 1 week

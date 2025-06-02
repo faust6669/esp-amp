@@ -1,0 +1,60 @@
+include: .gitlab/template.yml
+
+build (basic):
+  stage: core
+  extends: .template
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .gitlab/**/*.yml
+        - .gitlab-ci.yml
+        - components/esp_amp/**/*
+        - test_apps/esp_amp_basic_tests/**/*
+  tags:
+    - builder
+  image: espressif/idf:${IDF_VER}
+
+  variables:
+    RENAMED_BUILD_DIR: build_idf-${IDF_VER}_${TARGET}
+    IDF_CCACHE_ENABLE: 1
+    CCACHE_BASEDIR: $CI_PROJECT_DIR
+    CCACHE_DIR: $CI_PROJECT_DIR/ccache
+  cache:
+    - key: ccache-${IDF_VER}-${TARGET}
+      paths:
+        - $CCACHE_DIR
+      policy: pull-push
+
+  before_script:
+    - ccache --zero-stats
+    - echo "Building application ${APP_PROJECT_NAME} for target ${TARGET} in ${BASIC_TEST_PATH} with IDF ${IDF_VER}"
+    - cd "${BASIC_TEST_PATH}"
+  script:
+    - idf.py set-target ${TARGET}
+    - idf.py build
+    - |
+      if [ -d "build" ]; then
+        echo "Renaming build directory to ${RENAMED_BUILD_DIR}"
+        mv build "${RENAMED_BUILD_DIR}"
+      else
+        echo "Error: 'build' directory not found after idf.py build."
+        exit 1
+      fi
+  after_script:
+    - ccache --show-stats
+
+  artifacts:
+    name: "$basic_tests_binaries_${TARGET}_${IDF_VER}"
+    paths:
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/flasher_args.json"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/*.bin"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/*.map"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/*.elf"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/bootloader/bootloader.bin"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/bootloader/bootloader.elf"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/bootloader/bootloader.map"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/partition_table/*.bin"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/config/sdkconfig.json"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/log/*"
+      - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/build.ninja"
+    expire_in: 1 week

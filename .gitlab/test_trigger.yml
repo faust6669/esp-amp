@@ -1,0 +1,21 @@
+.test trigger template (basic):
+  stage: core
+  needs:
+    - job: "build (basic)"
+      artifacts: false
+  variables:
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+
+test trigger (basic):
+  extends: .test trigger template (basic)
+  when: on_success
+  trigger:
+    include: .gitlab/test_auto.yml
+    strategy: depend
+
+test trigger (basic | manual):
+  extends: .test trigger template (basic)
+  when: on_failure
+  trigger:
+    include: .gitlab/test_manual.yml
+    strategy: depend
