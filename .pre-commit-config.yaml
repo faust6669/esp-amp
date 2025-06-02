@@ -1,0 +1,21 @@
+# Install pre-commit: `pip install pre-commit`
+# Install hook: `pre-commit install --allow-missing-config -t pre-commit -t commit-msg`
+# Uninstall hook: `pre-commit uninstall`
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/espressif/check-copyright/
+    rev: v1.1.1
+    hooks:
+      - id: check-copyright
+        language: python
+        entry: bash -c 'check-copyright --config "$IDF_PATH/tools/ci/check_copyright_config.yaml" "$@"' _
+        verbose: true
+
+  - repo: https://github.com/espressif/astyle_py.git
+    rev: v1.0.5
+    hooks:
+      - id: astyle_py
+        language: python
+        entry: bash -c 'astyle_py --astyle-version=3.4.7 --rules="$IDF_PATH/tools/ci/astyle-rules.yml" "$@"' _
+        verbose: true
