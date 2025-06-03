@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2025 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -46,6 +46,9 @@ esp_amp_rpc_server_t esp_amp_rpc_server_init(esp_amp_rpc_server_cfg_t *cfg)
     if (cfg->queue_len == 0) {
         cfg->queue_len = 4;
     }
+
+    /* clear storage buffer before use */
+    memset(cfg->srv_tbl_stg, 0, sizeof(esp_amp_rpc_server_t) * cfg->srv_tbl_len);
 
     int ret = esp_amp_env_queue_create(&server_inst->queue, cfg->queue_len, sizeof(esp_amp_rpc_pkt_digest_t));
     if (ret != 0) {
