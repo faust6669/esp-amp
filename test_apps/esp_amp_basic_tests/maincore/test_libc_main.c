@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <stdio.h>
 #include "esp_amp.h"
 #include "esp_err.h"
@@ -22,7 +28,6 @@ extern const uint8_t subcore_libc_sub_test_bin_end[]   asm("_binary_subcore_test
 #define TEST_STRING (1 << 3)
 #define TEST_FLOAT_IN_ISR (1 << 4)
 #define TEST_ALL (TEST_MATH | TEST_CPP_INIT_ARRAY | TEST_MEMORY | TEST_STRING | TEST_FLOAT_IN_ISR)
-
 
 TEST_CASE("libc functions on subcore", "[esp_amp]")
 {
