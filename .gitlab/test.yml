@@ -1,7 +1,7 @@
-include: .gitlab/template.yml
+include: /.gitlab/template.yml
 
 test (basic):
-  extends: .template
+  extends: .test_apps_basic_template
   stage: test
   dependencies:
     - build (basic)
@@ -41,7 +41,7 @@ test (basic):
     - $CI_PROJECT_DIR/.gitlab/test_with_retries.sh ${TARGET} ${IDF_VER}
 
   artifacts:
-    name: "basic_tests_results_${TARGET}_${IDF_VER}_${CI_COMMIT_REF_SLUG}"
+    name: "test_apps_basic-result-${TARGET}-${IDF_VER}-${CI_COMMIT_REF_SLUG}"
     when: always
     paths:
       - "${BASIC_TEST_PATH}/result_${TARGET}_${IDF_VER}.xml"

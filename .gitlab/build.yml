@@ -1,19 +1,18 @@
-include: .gitlab/template.yml
+include: /.gitlab/template.yml
 
 build (basic):
-  extends: .template
+  extends: .test_apps_basic_template
   stage: build
   tags:
     - builder
   image: espressif/idf:${IDF_VER}
-
   variables:
     RENAMED_BUILD_DIR: build_idf-${IDF_VER}_${TARGET}
     IDF_CCACHE_ENABLE: 1
     CCACHE_BASEDIR: $CI_PROJECT_DIR
     CCACHE_DIR: $CI_PROJECT_DIR/ccache
   cache:
-    - key: ccache-${IDF_VER}-${TARGET}
+    - key: ccache-test_apps_basic-${IDF_VER}-${TARGET}
       paths:
         - $CCACHE_DIR
       policy: pull-push
@@ -35,9 +34,8 @@ build (basic):
       fi
   after_script:
     - ccache --show-stats
-
   artifacts:
-    name: "$basic_tests_binaries_${TARGET}_${IDF_VER}"
+    name: "$test_apps_basic-binaries-${TARGET}-${IDF_VER}-${CI_COMMIT_REF_SLUG}"
     paths:
       - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/flasher_args.json"
       - "${BASIC_TEST_PATH}/${RENAMED_BUILD_DIR}/*.bin"

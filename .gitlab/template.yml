@@ -1,14 +1,8 @@
-.amp_ci_matrix: &amp_ci_matrix
-  matrix:
-    - IDF_VER: "release-v5.3"
-      TARGET: ["esp32c6", "esp32p4"]
-    - IDF_VER: "release-v5.4"
-      TARGET: ["esp32c6", "esp32p4"]
-    - IDF_VER: "release-v5.5"
-      TARGET: ["esp32c6", "esp32p4"]
-
-.template:
-  parallel: *amp_ci_matrix
+.test_apps_basic_template:
+  parallel:
+    matrix:
+      - IDF_VER: ["release-v5.3", "release-v5.4", "release-v5.5"]
+        TARGET: ["esp32c6", "esp32p4"]
   interruptible: true
   rules:
     - if: $CI_COMMIT_BRANCH
@@ -20,3 +14,5 @@
           - .gitlab-ci.yml
           - components/esp_amp/**/*
           - test_apps/esp_amp_basic_tests/**/*
+  variables:
+    BASIC_TEST_PATH: "test_apps/esp_amp_basic_tests"

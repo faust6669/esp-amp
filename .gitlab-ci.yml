@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - extra
 
 workflow:
   auto_cancel:
@@ -26,9 +27,7 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "push"
       when: never
 
-variables:
-  BASIC_TEST_PATH: "test_apps/esp_amp_basic_tests"
-
 include:
   - local: "/.gitlab/build.yml"
   - local: "/.gitlab/test.yml"
+  - local: "/.gitlab/extra.yml"
