@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdatomic.h>
@@ -25,7 +31,8 @@ bool test_cpp_init_array_called = false;
 // A global object with a constructor
 class GlobalObject {
 public:
-    GlobalObject() {
+    GlobalObject()
+    {
         // Set the flag when the constructor is executed
         test_cpp_init_array_called = true;
         printf("GlobalObject constructor called\r\n");
@@ -35,11 +42,13 @@ public:
 // Instantiate the global object
 GlobalObject global_instance;
 
-bool areAlmostEqual(double a, double b) {
+bool areAlmostEqual(double a, double b)
+{
     return fabs(a - b) < 1e-6;
 }
 
-void test_math() {
+void test_math()
+{
     volatile float input_a = 3.0 * M_PI / 2.0;
     volatile float input_b = 0.0;
     volatile float input_c = 1.0;
@@ -61,12 +70,13 @@ void test_math() {
     assert(ceil(input_f) == 2);                     // ceil(1.5) = 2
     assert(floor(input_f) == 1);                    // floor(1.5) = 1
     assert(round(input_f) == 2);                    // round(1.5) = 2
-    assert(areAlmostEqual(fmod(input_f, 3),1.5));   // fmod(1.5, 3) = 1.5
+    assert(areAlmostEqual(fmod(input_f, 3), 1.5));  // fmod(1.5, 3) = 1.5
 
     atomic_fetch_or(test_bits, TEST_MATH);
 }
 
-void test_string() {
+void test_string()
+{
     // Test strcmp
     assert(strcmp("hello", "hello") == 0);
     assert(strcmp("hello", "world") < 0);
@@ -84,15 +94,17 @@ void test_string() {
 }
 
 #if CONFIG_ESP_AMP_SUBCORE_ENABLE_HEAP
-void test_basic_allocation() {
-    for (int i=1; i<=10; i++) {
+void test_basic_allocation()
+{
+    for (int i = 1; i <= 10; i++) {
         void *ptr = malloc(i * 16 * sizeof(int));
         assert(ptr != NULL);
         free(ptr);
     }
 }
 
-void test_zero_allocation() {
+void test_zero_allocation()
+{
     void *ptr = malloc(0);
     free(ptr);
 
@@ -100,20 +112,23 @@ void test_zero_allocation() {
     free(ptr);
 }
 
-void test_large_allocation() {
+void test_large_allocation()
+{
     void *ptr = malloc(INT32_MAX / 2);
     assert(ptr == NULL);
     free(ptr);
 }
 
-void test_double_free() {
+void test_double_free()
+{
     void *ptr = malloc(100);
     assert(ptr != NULL);
     free(ptr);
     free(ptr);
 }
 
-void test_realloc() {
+void test_realloc()
+{
     void *ptr = malloc(100);
     assert(ptr != NULL);
 
@@ -130,7 +145,8 @@ void test_realloc() {
     assert(new_ptr == NULL);
 }
 
-void test_calloc_initialization() {
+void test_calloc_initialization()
+{
     size_t num_elements = 10;
     size_t element_size = sizeof(int);
 
@@ -145,7 +161,8 @@ void test_calloc_initialization() {
 }
 #endif /* CONFIG_ESP_AMP_SUBCORE_ENABLE_HEAP */
 
-void test_memory() {
+void test_memory()
+{
 
     // Test malloc
 #if CONFIG_ESP_AMP_SUBCORE_ENABLE_HEAP
@@ -163,7 +180,9 @@ void test_memory() {
     // Test memset
     char buffer[10];
     memset(buffer, 'A', sizeof(buffer));
-    for (int i=0; i<10; i++) assert(buffer[i] == 'A');
+    for (int i = 0; i < 10; i++) {
+        assert(buffer[i] == 'A');
+    }
 
     // Test memcpy
     char src[] = "Hello, World!";
@@ -216,7 +235,7 @@ extern "C" int main(void)
         atomic_fetch_or(test_bits, TEST_CPP_INIT_ARRAY);
     }
 
-    while(1) {
+    while (1) {
         esp_amp_platform_delay_ms(1000);
     }
 }

@@ -9,3 +9,14 @@
 
 .template:
   parallel: *amp_ci_matrix
+  interruptible: true
+  rules:
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        compare_to: "refs/heads/main"
+        paths:
+          - .gitlab/**/*.yml
+          - .gitlab-ci.yml
+          - components/esp_amp/**/*
+          - test_apps/esp_amp_basic_tests/**/*

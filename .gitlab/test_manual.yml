@@ -1,5 +1,0 @@
-include: .gitlab/test_template.yml
-
-test (basic | manual):
-  extends: .test template (basic)
-  when: manual

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
@@ -44,7 +50,6 @@ static IRAM_ATTR int sw_intr_id3_handler(void *arg)
     main_sw_intr_record[3]++;
     return 0;
 }
-
 
 TEST_CASE("maincore & subcore can trigger software interrupt to each other", "[esp_amp]")
 {

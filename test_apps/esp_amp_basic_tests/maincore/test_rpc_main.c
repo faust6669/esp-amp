@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
@@ -23,7 +29,7 @@ TEST_CASE("RPC client init/deinit", "[esp_amp]")
     TEST_ASSERT(esp_amp_init() == 0);
     TEST_ASSERT(esp_amp_rpmsg_main_init(rpmsg_dev, 32, 64, false, false) == 0);
 
-    static esp_amp_rpc_client_stg_t rpc_client_stg;
+    esp_amp_rpc_client_stg_t rpc_client_stg;
     esp_amp_rpc_client_cfg_t cfg = {
         .client_id = RPC_MAIN_CORE_CLIENT,
         .server_id = RPC_MAIN_CORE_SERVER,
@@ -58,10 +64,10 @@ TEST_CASE("RPC server init/deinit", "[esp_amp]")
     TEST_ASSERT(esp_amp_init() == 0);
     TEST_ASSERT(esp_amp_rpmsg_main_init(rpmsg_dev, 32, 64, false, false) == 0);
 
-    static esp_amp_rpc_server_stg_t rpc_server_stg;
-    static uint8_t req_buf[64];
-    static uint8_t resp_buf[64];
-    static uint8_t srv_tbl_stg[sizeof(esp_amp_rpc_service_t) * 2];
+    esp_amp_rpc_server_stg_t rpc_server_stg;
+    uint8_t req_buf[64];
+    uint8_t resp_buf[64];
+    uint8_t srv_tbl_stg[sizeof(esp_amp_rpc_service_t) * 2];
     esp_amp_rpc_server_cfg_t cfg = {
         .rpmsg_dev = rpmsg_dev,
         .server_id = RPC_MAIN_CORE_SERVER,
@@ -125,10 +131,10 @@ TEST_CASE("RPC server add/del service", "[esp_amp]")
     TEST_ASSERT(esp_amp_rpmsg_main_init(rpmsg_dev, 32, 64, false, false) == 0);
 
     /* init server */
-    static esp_amp_rpc_server_stg_t rpc_server_stg;
-    static uint8_t req_buf[64];
-    static uint8_t resp_buf[64];
-    static uint8_t srv_tbl_stg[sizeof(esp_amp_rpc_service_t) * 2];
+    esp_amp_rpc_server_stg_t rpc_server_stg;
+    uint8_t req_buf[64];
+    uint8_t resp_buf[64];
+    uint8_t srv_tbl_stg[sizeof(esp_amp_rpc_service_t) * 2];
     esp_amp_rpc_server_cfg_t cfg = {
         .rpmsg_dev = rpmsg_dev,
         .server_id = RPC_MAIN_CORE_SERVER,
@@ -168,7 +174,7 @@ TEST_CASE("RPC client exec cmd", "[esp_amp]")
     TEST_ASSERT(esp_amp_init() == 0);
     TEST_ASSERT(esp_amp_rpmsg_main_init(rpmsg_dev, 32, 64, false, false) == 0);
 
-    static esp_amp_rpc_client_stg_t rpc_client_stg;
+    esp_amp_rpc_client_stg_t rpc_client_stg;
     esp_amp_rpc_client_cfg_t cfg = {
         .client_id = RPC_MAIN_CORE_CLIENT,
         .server_id = RPC_MAIN_CORE_SERVER,
@@ -215,8 +221,8 @@ extern const uint8_t subcore_rpc_test_bin_end[]   asm("_binary_subcore_test_rpc_
 
 TEST_CASE("RPC invalid cmd test", "[esp_amp]")
 {
-    static esp_amp_rpc_client_stg_t rpc_client_stg;
-    static esp_amp_rpmsg_dev_t rpmsg_dev;
+    esp_amp_rpc_client_stg_t rpc_client_stg;
+    esp_amp_rpmsg_dev_t rpmsg_dev;
 
     /* init esp amp */
     assert(esp_amp_init() == 0);

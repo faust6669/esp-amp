@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "sdkconfig.h"
 #include <stdio.h>
 
@@ -63,7 +69,6 @@ static uint32_t cross_core_event_st;
 
 extern const uint8_t subcore_event_test_bin_start[] asm("_binary_subcore_test_event_bin_start");
 extern const uint8_t subcore_event_test_bin_end[]   asm("_binary_subcore_test_event_bin_end");
-
 
 TEST_CASE("esp-amp event bind error when event handle is NULL", "[esp_amp]")
 {
