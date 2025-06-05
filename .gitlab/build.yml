@@ -11,8 +11,11 @@ build (basic):
     IDF_CCACHE_ENABLE: 1
     CCACHE_BASEDIR: $CI_PROJECT_DIR
     CCACHE_DIR: $CI_PROJECT_DIR/ccache
+    CCACHE_NOHASHDIR: 1
+    CCACHE_SLOPPINESS: "locale,time_macros,random_seed"
+    CCACHE_MAXSIZE: "100M"
   cache:
-    - key: ccache-test_apps_basic-${IDF_VER}-${TARGET}
+    - key: ccache-${IDF_VER}
       paths:
         - $CCACHE_DIR
       policy: pull-push
@@ -33,7 +36,7 @@ build (basic):
         exit 1
       fi
   after_script:
-    - ccache --show-stats
+    - ccache --show-stats --verbose --verbose
   artifacts:
     name: "$test_apps_basic-binaries-${TARGET}-${IDF_VER}-${CI_COMMIT_REF_SLUG}"
     paths:
