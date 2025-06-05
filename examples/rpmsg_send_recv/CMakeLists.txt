@@ -20,4 +20,8 @@ set(EXTRA_COMPONENT_DIRS
     ${SUBCORE_COMPONENT_DIRS}
 )
 
+# NOTE: workaround for using `idf_build_set_property(MINIMAL_BUILD ON)`
+#       in IDF v5.3 and v5.4
+set(COMPONENTS maincore sub_main_cfg)
+
 project(esp_amp_rpmsg_send_recv)

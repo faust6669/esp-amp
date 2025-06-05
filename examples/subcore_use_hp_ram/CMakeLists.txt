@@ -19,4 +19,8 @@ include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 # essential to include this file before project() in unified build mode
 include(${CMAKE_CURRENT_LIST_DIR}/subcore/subcore_config.cmake)
 
+# NOTE: workaround for using `idf_build_set_property(MINIMAL_BUILD ON)`
+#       in IDF v5.3 and v5.4
+set(COMPONENTS maincore)
+
 project(esp_amp_subcore_use_hp_ram)
