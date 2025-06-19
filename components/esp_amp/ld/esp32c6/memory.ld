@@ -25,6 +25,7 @@ ENTRY(reset_vector)
 
 MEMORY
 {
+    app_desc(RW) :       ORIGIN = 0x42000020 , LENGTH = 0x100
     /*first 128byte for exception/interrupt vectors*/
     vector_table(RX) :   ORIGIN = ULP_MEM_START_ADDRESS , LENGTH = 0x80
     ram(RWX) :           ORIGIN = ULP_MEM_START_ADDRESS + 0x80, LENGTH = ALIGNED_COPROC_MEM - 0x80 - CONFIG_ULP_SHARED_MEM
@@ -36,6 +37,11 @@ MEMORY
 
 SECTIONS
 {
+    .flash.appdesc : ALIGN(0x10)
+    {
+        *(.rodata_desc .rodata_desc.*)
+    } > app_desc
+
     .vector.text :
     {
         /*exception/interrupt vectors*/

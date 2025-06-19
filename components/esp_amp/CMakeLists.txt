@@ -55,7 +55,7 @@ if(BOOTLOADER_BUILD)
         )
     endif()
 
-    list(APPEND reqs soc hal)
+    list(APPEND reqs soc hal esp_app_format)
 
     if(IDF_TARGET STREQUAL "esp32c6")
         list(APPEND reqs ulp)
@@ -146,7 +146,7 @@ else()
         endif()
     endif()
 
-    list(APPEND reqs driver esp_adc bootloader_support esp_partition spi_flash)
+    list(APPEND reqs driver esp_adc bootloader_support esp_partition spi_flash esp_app_format)
 
     if(IDF_TARGET STREQUAL "esp32c6")
         list(APPEND reqs ulp)
