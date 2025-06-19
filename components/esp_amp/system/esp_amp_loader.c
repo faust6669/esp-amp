@@ -5,6 +5,8 @@
 */
 
 #include "sdkconfig.h"
+#include "soc/soc.h"
+#include "esp_app_desc.h"
 #include "hal/misc.h"
 #include "esp_err.h"
 #include "esp_assert.h"
@@ -69,6 +71,22 @@ static bool is_valid_subcore_app_addr(intptr_t addr)
     ret |= is_valid_subcore_app_rtcram_addr(addr);
 #endif
     return ret;
+}
+
+static void show_sub_app_info(esp_app_desc_t *app_desc)
+{
+    ESP_AMP_LOGI(TAG, "Subcore App Info:");
+    if (app_desc->project_name[0]) {
+        ESP_AMP_LOGI(TAG, "Project name:     %s", app_desc->project_name);
+    }
+    if (app_desc->version[0]) {
+        ESP_AMP_LOGI(TAG, "App version:      %s", app_desc->version);
+    }
+    ESP_AMP_LOGI(TAG, "Secure version:   %" PRIu32, app_desc->secure_version);
+    if (app_desc->date[0]) {
+        ESP_AMP_LOGI(TAG, "Compile time:     %s %s", app_desc->date, app_desc->time);
+    }
+    ESP_AMP_LOGI(TAG, "ESP-IDF:          %s", app_desc->idf_ver);
 }
 
 esp_err_t esp_amp_load_sub_from_partition(const esp_partition_t* sub_partition)
@@ -141,6 +159,17 @@ esp_err_t esp_amp_load_sub(const void* sub_bin)
                     unused_reserved_dram_start = segment_end;
                 }
 #endif
+            } else if (segment_start >= SOC_DROM_LOW && segment_end <= SOC_DROM_HIGH) {
+                /* subcore app desc block. load address in rodata to make esptool happy. won't be loaded into ram */
+                esp_app_desc_t *app_desc = (esp_app_desc_t *)(&sub_bin_byte_ptr[next_addr]);
+                if (app_desc->magic_word == ESP_APP_DESC_MAGIC_WORD) {
+                    show_sub_app_info(app_desc);
+                    next_addr += sub_img_data.segments[i].data_len;
+                } else {
+                    ESP_AMP_LOGE(TAG, "Invalid app desc magic word");
+                    ret = ESP_FAIL;
+                    break;
+                }
             } else {
                 ESP_AMP_LOGE(TAG, "Invalid segment region (%p - %p)", (void *)segment_start, (void *)segment_end);
                 ret = ESP_FAIL;

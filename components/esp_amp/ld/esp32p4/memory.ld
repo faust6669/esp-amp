@@ -10,6 +10,7 @@
 
 MEMORY
 {
+  app_desc(rw): ORIGIN = 0x40000020 , LENGTH = 0x100
   ram (rwx): ORIGIN = SUBCORE_USE_HP_MEM_START, LENGTH = SUBCORE_USE_HP_MEM_SIZE
 }
 
@@ -17,6 +18,11 @@ ENTRY(_start)
 
 SECTIONS
 {
+  .flash.appdesc : ALIGN(0x10)
+  {
+    *(.rodata_desc .rodata_desc.*)
+  } > app_desc
+
   . = ORIGIN(ram);
   .text.entry ORIGIN(ram):
   {
@@ -37,7 +43,7 @@ SECTIONS
     *(.text .stub .text.* .gnu.linkonce.t.*)
     *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
     *(.gnu.warning)
-  }
+  } > ram
   . = ALIGN(4);
 
   .rodata :
