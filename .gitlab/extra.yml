@@ -35,8 +35,11 @@ example build:
     IDF_CCACHE_ENABLE: 1
     CCACHE_BASEDIR: $CI_PROJECT_DIR
     CCACHE_DIR: $CI_PROJECT_DIR/ccache
+    CCACHE_NOHASHDIR: 1
+    CCACHE_SLOPPINESS: "locale,time_macros,random_seed"
+    CCACHE_MAXSIZE: "100M"
   cache:
-    - key: ccache-${EXAMPLE}-${IDF_VER}-${TARGET}
+    - key: ccache-${IDF_VER}
       paths:
         - $CCACHE_DIR
       policy: pull-push
@@ -51,7 +54,7 @@ example build:
     - idf.py set-target ${TARGET}
     - idf.py build
   after_script:
-    - ccache --show-stats
+    - ccache --show-stats --verbose --verbose
   artifacts:
     name: "${EXAMPLE}-binaries-${TARGET}-${IDF_VER}-${CI_COMMIT_REF_SLUG}"
     paths:

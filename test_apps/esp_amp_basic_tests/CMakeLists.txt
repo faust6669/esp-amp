@@ -29,4 +29,8 @@ foreach(SUBCORE_APP_DIR IN LISTS SUBCORE_APP_DIRS)
   endif()
 endforeach()
 
+# NOTE: workaround for using `idf_build_set_property(MINIMAL_BUILD ON)`
+#       in IDF v5.3 and v5.4
+set(COMPONENTS maincore)
+
 project(esp_amp_basic_tests)
