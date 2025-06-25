@@ -35,13 +35,13 @@ Although ESP-AMP does not prohibit simultaneous access to a same peripheral by b
 
 For ESP-AMP projects with LP core as subcore, it is recommended for LP core to operate LP peripherals only. These periphrals belongs to RTC system, with different power and clk domain from HP system. LP core can fully control these periphrals, including interrupt registration and handling, without the need to worry about the impact of HP core.
 
-Supported LP peripherals in C6 and P4 are listed below:
+Supported LP peripherals in ESP32-C5 and ESP32-C6 are listed below:
 
-| Peripheral | ESP32-C6 | ESP32-P4 |
-| :--- | :--- | :--- |
+| Peripheral | ESP32-C5 | ESP32-C6
+| :---: | :---: | :---: |
 | LP IO | Yes | Yes |
-| LP I2C | Yes | Yes |
+| LP I2C | Yes (IDF v5.4) | Yes (IDF v5.4) |
 | LP UART | Yes | Yes |
-| LP SPI | No | Yes |
+| LP SPI | No | No |
 
-ESP-IDF's ULP component has implemented LP peripheral drivers. LP subcore developers can benefit from that to speed up the firmware implementation. For more details, please refer to ESP-IDF API reference of [C6 ulp lp core](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c6/api-reference/system/ulp-lp-core.html) for C6 or [P4 ulp lp core](https://docs.espressif.com/projects/esp-idf/en/latest/esp32p4/api-reference/system/ulp-lp-core.html) for P4.
+ESP-IDF's ULP component has implemented LP peripheral drivers. LP subcore developers can benefit from that to speed up the firmware implementation. For more details, please refer to ESP-IDF ULP LP Core Doc for [ESP32-C6](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c6/api-reference/system/ulp-lp-core.html) or [ESP32-C5](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c5/api-reference/system/ulp-lp-core.html).

@@ -3,6 +3,8 @@
     matrix:
       - IDF_VER: ["release-v5.3", "release-v5.4", "release-v5.5"]
         TARGET: ["esp32c6", "esp32p4"]
+      - IDF_VER: ["release-v5.5"]
+        TARGET: ["esp32c5"]
   interruptible: true
   rules:
     - if: $CI_COMMIT_BRANCH

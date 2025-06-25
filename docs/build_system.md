@@ -204,7 +204,7 @@ If you encounter issues such as `_binary_${SUBCORE_APP_NAME}_bin_start not found
 ## Sdkconfig Options
 
 * `CONFIG_ESP_AMP_ENABLED`: Enable ESP-AMP
-* `CONFIG_ESP_AMP_SUBCORE_TYPE`: Subcore type. The proper subcore type is automatically chosen for different SoCs. For ESP32-C6, `CONFIG_ESP_AMP_SUBCORE_TYPE_LP_CORE` is the only choice supported. For ESP32-P4, the only choice is `CONFIG_ESP_AMP_SUBCORE_TYPE_HP_CORE`.
+* `CONFIG_ESP_AMP_SUBCORE_TYPE`: Subcore type. The proper subcore type is automatically chosen for different SoCs. For ESP32-C5 and ESP32-C6, `CONFIG_ESP_AMP_SUBCORE_TYPE_LP_CORE` is the only choice supported. For ESP32-P4, the only choice is `CONFIG_ESP_AMP_SUBCORE_TYPE_HP_CORE`.
 
 ## Application Examples 
 

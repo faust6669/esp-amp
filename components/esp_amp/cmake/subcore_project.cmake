@@ -2,6 +2,10 @@ if(NOT DEFINED IDF_PATH)
     set(IDF_PATH $ENV{IDF_PATH})
 endif()
 
+if(NOT DEFINED IDF_TARGET)
+    set(IDF_TARGET $ENV{IDF_TARGET})
+endif()
+
 ## set bootloader build components
 set(COMPONENTS bootloader esptool_py esp_hw_support esp_system freertos hal partition_table soc bootloader_support log spi_flash micro-ecc main efuse esp_system newlib CACHE STRING "" FORCE)
 set(common_req log esp_rom esp_common esp_hw_support esp_system hal CACHE STRING "" FORCE)
@@ -16,7 +20,7 @@ list(APPEND EXTRA_COMPONENT_DIRS
 include_directories(${CONFIG_DIR})
 
 ## enable idf bootloader build with customized toolchain flag
-if(IDF_TARGET STREQUAL "esp32c6")
+if(IDF_TARGET STREQUAL "esp32c6" OR IDF_TARGET STREQUAL "esp32c5")
     set(TOOLCHAIN_FLAG_SUFFIX "esp-lp-rv32")
 elseif(IDF_TARGET STREQUAL "esp32p4")
     set(TOOLCHAIN_FLAG_SUFFIX "esp-rv32")
@@ -76,7 +80,7 @@ idf_build_set_property(COMPILE_OPTIONS "-Wno-implicit-fallthrough" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-Wno-error=implicit-function-declaration" APPEND)
 
 ## set target specific flags
-if(IDF_TARGET STREQUAL "esp32c6")
+if(IDF_TARGET STREQUAL "esp32c6" OR IDF_TARGET STREQUAL "esp32c5")
     idf_build_set_property(COMPILE_DEFINITIONS "IS_ULP_COCPU=1" APPEND)
     idf_build_set_property(COMPILE_DEFINITIONS "CONFIG_ESP_CONSOLE_UART_NUM=0" APPEND)
 endif()

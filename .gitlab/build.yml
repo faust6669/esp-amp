@@ -25,7 +25,7 @@ build (basic):
     - echo "Building application ${APP_PROJECT_NAME} for target ${TARGET} in ${BASIC_TEST_PATH} with IDF ${IDF_VER}"
     - cd "${BASIC_TEST_PATH}"
   script:
-    - idf.py set-target ${TARGET}
+    - export IDF_TARGET=${TARGET}
     - idf.py build
     - |
       if [ -d "build" ]; then

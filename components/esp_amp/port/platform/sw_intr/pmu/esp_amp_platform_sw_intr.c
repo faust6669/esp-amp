@@ -41,7 +41,7 @@ int esp_amp_platform_sw_intr_install(void)
 {
     int ret = 0;
 #if IS_MAIN_CORE
-#if CONFIG_IDF_TARGET_ESP32C6
+#if CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32C5
     ret |= esp_intr_alloc(ETS_PMU_INTR_SOURCE, ESP_INTR_FLAG_LEVEL2, pmu_sw_intr_handler, NULL, NULL);
 #elif CONFIG_IDF_TARGET_ESP32P4
     ret |= esp_intr_alloc(ETS_PMU_0_INTR_SOURCE, ESP_INTR_FLAG_LEVEL2, pmu_sw_intr_handler, NULL, NULL);

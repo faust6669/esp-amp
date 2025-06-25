@@ -1,3 +1,16 @@
+# Define reusable EXAMPLE list
+.example_list: &example_list
+  - build_system::unified_build
+  - build_system::separate_build::maincore_project
+  - build_system::separate_build::subcore_project
+  - event
+  - rpc::maincore_client_subcore_server
+  - rpc::subcore_client_maincore_server
+  - rpmsg_send_recv
+  - software_interrupt
+  - subcore_use_hp_ram
+  - virtqueue
+
 example build:
   stage: extra
   tags:
@@ -20,17 +33,10 @@ example build:
     matrix:
       - IDF_VER: ["release-v5.3", "release-v5.4", "release-v5.5"]
         TARGET: ["esp32c6", "esp32p4"]
-        EXAMPLE:
-          - build_system::unified_build
-          - build_system::separate_build::maincore_project
-          - build_system::separate_build::subcore_project
-          - event
-          - rpc::maincore_client_subcore_server
-          - rpc::subcore_client_maincore_server
-          - rpmsg_send_recv
-          - software_interrupt
-          - subcore_use_hp_ram
-          - virtqueue
+        EXAMPLE: *example_list
+      - IDF_VER: ["release-v5.5"]
+        TARGET: ["esp32c5"]
+        EXAMPLE: *example_list
   variables:
     IDF_CCACHE_ENABLE: 1
     CCACHE_BASEDIR: $CI_PROJECT_DIR
@@ -51,7 +57,7 @@ example build:
     - echo "Building example ${EXAMPLE} for target ${TARGET} with IDF ${IDF_VER}"
     - cd "${EXAMPLE_PATH}"
   script:
-    - idf.py set-target ${TARGET}
+    - export IDF_TARGET=${TARGET}
     - idf.py build
   after_script:
     - ccache --show-stats --verbose --verbose

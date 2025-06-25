@@ -1,7 +1,7 @@
 menu "ESP Asymmetric Multi-Processing(AMP) Framework"
 
     config ESP_AMP_ENABLED
-        depends on (IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32P4)
+        depends on (IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5 || IDF_TARGET_ESP32P4)
         bool "Enable ESP Asymmetric Multi-Processing(AMP) framework"
         default "n"
         help
@@ -10,14 +10,14 @@ menu "ESP Asymmetric Multi-Processing(AMP) Framework"
     choice ESP_AMP_SUBCORE_TYPE
         prompt "ESP AMP subcore type"
         depends on ESP_AMP_ENABLED
-        default ESP_AMP_SUBCORE_TYPE_LP_CORE if IDF_TARGET_ESP32C6
+        default ESP_AMP_SUBCORE_TYPE_LP_CORE if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
         default ESP_AMP_SUBCORE_TYPE_HP_CORE if IDF_TARGET_ESP32P4
         help
             Choose the ESP AMP SubCore type: HP core or LP core
 
         config ESP_AMP_SUBCORE_TYPE_LP_CORE
             bool "LP Core"
-            depends on IDF_TARGET_ESP32C6
+            depends on IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             depends on SOC_LP_CORE_SUPPORTED
 
         config ESP_AMP_SUBCORE_TYPE_HP_CORE
@@ -31,11 +31,10 @@ menu "ESP Asymmetric Multi-Processing(AMP) Framework"
         depends on ESP_AMP_ENABLED
 
         choice ESP_AMP_SHARED_MEM_LOC
-            bool "Allocate shared memory from HP RAM or LP RAM"
+            bool "Allocate shared memory from HP RAM"
             default ESP_AMP_SHARED_MEM_IN_HP
             help
-                Choose either HP RAM or LP RAM to allocate shared memory used by ESP AMP.
-                At present, ESP-AMP only supports allocating shared memory from HP RAM.
+                Allocating shared memory from HP RAM is the only supported option.
 
             config ESP_AMP_SHARED_MEM_IN_HP
                 bool "ESP AMP shared memory in HP RAM"
@@ -43,9 +42,9 @@ menu "ESP Asymmetric Multi-Processing(AMP) Framework"
 
         config ESP_AMP_SHARED_MEM_SIZE
             int "Size of shared memory accessible by maincore and subcore"
-            default 16384 if IDF_TARGET_ESP32C6
+            default 16384 if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             default 16384 if IDF_TARGET_ESP32P4
-            range 1024 20480 if IDF_TARGET_ESP32C6
+            range 1024 20480 if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             range 1024 65536 if IDF_TARGET_ESP32P4
             help
                 Configure the size of shared memory accessible by maincore and subcore.
@@ -67,9 +66,9 @@ menu "ESP Asymmetric Multi-Processing(AMP) Framework"
         config ESP_AMP_SUBCORE_USE_HP_MEM_SIZE
             int "Maximum size of HP RAM to load subcore firmware"
             depends on ESP_AMP_SUBCORE_USE_HP_MEM
-            default 16384 if IDF_TARGET_ESP32C6
+            default 16384 if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             default 65536 if IDF_TARGET_ESP32P4
-            range 16384 49152 if IDF_TARGET_ESP32C6
+            range 16384 49152 if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             range 65536 196608 if IDF_TARGET_ESP32P4
             help
                 Configure the maximum size of HP RAM to load subcore firmware. Unused
@@ -77,13 +76,13 @@ menu "ESP Asymmetric Multi-Processing(AMP) Framework"
 
         config ESP_AMP_SUBCORE_STACK_SIZE_MIN
             int "Minimal stack size for subcore app"
-            default 1024 if IDF_TARGET_ESP32C6
+            default 1024 if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             default 16384 if IDF_TARGET_ESP32P4
             range 256 32768
             help
-                Configure the minimal size of stack space for subcore app. Stack
-                is allocated from LP RAM on ESP32-C6 and HP RAM on ESP32-P4. This
-                option serves as a lower bound for the stack size. If the remaining
+                Configure the minimal size of stack space for subcore app. Stack is
+                allocated from RTC RAM on ESP32-C5 and ESP32-C6 and HP RAM on ESP32-P4.
+                This option serves as a lower bound for the stack size. If the remaining
                 memory space is insufficient to allocate the stack, build will fail.
 
         config ESP_AMP_SUBCORE_ENABLE_HEAP
@@ -95,10 +94,10 @@ menu "ESP Asymmetric Multi-Processing(AMP) Framework"
         config ESP_AMP_SUBCORE_HEAP_SIZE
             int "Size of heap for subcore app"
             depends on ESP_AMP_SUBCORE_ENABLE_HEAP
-            default 512 if (IDF_TARGET_ESP32C6 && !ESP_AMP_SUBCORE_USE_HP_MEM)
-            default 4096 if (IDF_TARGET_ESP32C6 && ESP_AMP_SUBCORE_USE_HP_MEM)
+            default 512 if ((IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5) && !ESP_AMP_SUBCORE_USE_HP_MEM)
+            default 4096 if ((IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5) && ESP_AMP_SUBCORE_USE_HP_MEM)
             default 16384 if IDF_TARGET_ESP32P4
-            range 0 16384 if IDF_TARGET_ESP32C6
+            range 0 16384 if IDF_TARGET_ESP32C6 || IDF_TARGET_ESP32C5
             range 0 65536 if IDF_TARGET_ESP32P4
             help
                 Configure the size of heap for subcore app.
